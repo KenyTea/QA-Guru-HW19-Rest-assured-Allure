@@ -1,4 +1,4 @@
-# Automation api testing with [Rest-assured](https://rest-assured.io/)
+# Automation api and ui testing with [Rest-assured](https://rest-assured.io/)
 
 
 ___
@@ -30,7 +30,7 @@ ___
 
 ## Description:
 
-This project was created to understand how to work with Rest Assured.
+this project was created for learning to work with Rest Assured and UI tests
 
 ___
 
@@ -45,3 +45,5 @@ ___
 [Parse json](https://jsonlint.com/)
 
 [Examples for training](https://reqres.in/)
+
+[Learning example](https://github.com/qa-guru/simple-rest-assured/blob/demowebshop/src/test/java/DemowebshopTests.java)
