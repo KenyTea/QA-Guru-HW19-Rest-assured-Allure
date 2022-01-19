@@ -13,5 +13,7 @@ public interface AppConfig extends Config {
     String apiUrl();
     String userLogin();
     String userPassword();
+    String FirstName();
+    String LastName();
 
 }

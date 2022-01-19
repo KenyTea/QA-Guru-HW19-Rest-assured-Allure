@@ -11,14 +11,16 @@ import org.openqa.selenium.Cookie;
 import java.time.Duration;
 
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.value;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
 
 @Story("Login tests")
-public class LoginTests {
+public class DemowebshopTests {
 
     @BeforeAll
     static void configureBaseUrl() {
@@ -28,27 +30,24 @@ public class LoginTests {
 
     @Test
     @Tag("demowebshop")
-    @Disabled("Example test code for further test development")
-    @DisplayName("Successful authorization to some demowebshop (UI)")
-    void loginTest() {
-        step("Open login page", () ->
-                open("/login"));
-
-        step("Fill login form", () -> {
-            $("#Email").setValue(App.config.userLogin());
-            $("#Password").setValue(App.config.userPassword())
-                    .pressEnter();
-        });
-
-        step("Verify successful authorization", () ->
-                $(".account").shouldHave(text(App.config.userLogin())));
-    }
-
-    @Test
-    @Tag("demowebshop")
-    //@Disabled("Example test code for further test development")
-    @DisplayName("Successful authorization to some demowebshop (API + UI)")
+    @DisplayName("Authorization to demowebshop (API + UI)")
     void loginWithCookieTest() {
+
+        step("Add product to cart", () -> {
+                    given()
+                            .contentType("application/x-www-form-urlencoded; charset=UTF-8")
+                            .body("product_attribute_74_5_26=81&product_attribute_74_6_27=83&product_attribute_74_3_28=86&addtocart_74.EnteredQuantity=1")
+                            .cookie("Nop.customer=cd69ccd7-a87f-4c76-9f7a-5fe3355552e1")
+                            .when()
+                            .post("/addproducttocart/details/74/1")
+                            .then()
+                            .statusCode(200)
+                            .body("success", is(true))
+                            .body("updatetopcartsectionhtml", is("(1)"))
+                            .body("message", is("The product has been added to your <a href=\"/cart\">shopping cart</a>"));
+
+                });
+
         step("Get cookie by api and set it to browser", () -> {
             String authorizationCookie =
                     given()
@@ -71,10 +70,26 @@ public class LoginTests {
         });
 
         step("Open main page", () ->
-                    open("")
-        );
+                open(""));
 
         step("Verify successful authorization", () ->
                 $(".account").shouldHave(text(App.config.userLogin())));
+
+        step("Check client cart", () -> {
+                    $(".cart-label").click();
+                    $(".page-title").shouldHave(text("Shopping cart"));
+                    $(".product-unit-price").shouldHave(text("815.00"));});
+
+        step("Check client account", () -> {
+                    $(".account").click();
+                    $(".page-title").should(Condition.visible, Duration.ofSeconds(30));
+                    $(".page-title").shouldHave(text("My account - Customer info"));
+                    $("#FirstName").shouldHave(value(App.config.FirstName()));
+                    $("#LastName").shouldHave(value(App.config.LastName()));
+                    $("#Email").shouldHave(value(App.config.userLogin()));
+                }
+        );
+
+
     }
 }
