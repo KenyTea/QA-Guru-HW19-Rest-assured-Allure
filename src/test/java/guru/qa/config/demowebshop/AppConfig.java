@@ -15,5 +15,6 @@ public interface AppConfig extends Config {
     String userPassword();
     String FirstName();
     String LastName();
+    String remoteUrl();
 
 }
